@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./styles/style.css" />
+    <script src="./scripts/playlist.js"></script>
+    <!-- <script src="./scripts/videobooth.js"></script> -->
+    <title>Test Yurina</title>
+  </head>
+  <body>
+    <div id="booth">
+      <div id="console">
+        <div id="videoDiv">
+          <video
+            controls
+            id="video"
+            width="720px"
+            height="480px"
+            poster="./assets/image/poster.jpg"
+          ></video>
+          <canvas id="buffer" width="720px" height="480px"> </canvas>
+          <canvas id="display" width="720px" height="480px"> </canvas>
+        </div>
+        <div id="dashBoard">
+          <div id="effects">
+            <a class="a_button effect unSelected" id="normal"> normal </a>
+            <a class="a_button effect unSelected" id="western"> western </a>
+            <a class="a_button effect unSelected" id="noir"> noir </a>
+            <a class="a_button effect unSelected" id="scifi"> scifi </a>
+          </div>
+          <div id="controls">
+            <a class="a_button control unSelected" id="play"> play </a>
+            <a class="a_button control unSelected" id="pause"> pause </a>
+            <a class="a_button control unSelected" id="loop"> loop </a>
+            <a class="a_button control unSelected" id="mute"> mute </a>
+          </div>
+        </div>
+        <div id="videoSelection"></div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,116 @@
+body {
+  background-color: azure;
+}
+
+/* ----- console -------- */
+
+#console {
+  position: relative;
+}
+
+/* ----- dashBoard -------- */
+
+#dashBoard {
+  position: absolute;
+  top: 520px;
+  left: 200px;
+  width: 720px;
+  /* overflow: hidden; */
+  display: flex;
+  justify-content: space-between;
+}
+#effects {
+  display: flex;
+}
+#controls {
+  display: flex;
+}
+
+/* ----- display -------- */
+
+#videoDiv {
+  position: absolute;
+  width: 720px;
+  height: 480px;
+  top: 40px;
+  left: 200px;
+  border-radius: 30px;
+  overflow: hidden;
+  z-index: 0;
+}
+#video {
+  background-color: black;
+}
+#videoDiv canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+/* ----  buttons  ----- */
+
+.a_button {
+  width: 80px;
+  height: 20px;
+  margin: 3px;
+  text-align: center;
+  background-color: black;
+  border-radius: 4px;
+  border: 1px solid white;
+  color: aliceblue;
+  letter-spacing: 0.09em;
+  line-height: 14px;
+  font-weight: 400;
+  font-size: 13px;
+  text-transform: uppercase;
+  padding-top: 5px;
+  cursor: pointer;
+}
+.unSelected {
+  box-shadow: 7px 10px 10px 0px #000;
+  transition: all 0.1s ease-out;
+}
+.selected {
+  box-shadow: 3px 4px 5px 0px #000;
+  transition: all 0.1s ease-out;
+}
+#controls .a_button {
+  width: 70px;
+}
+
+/* ----  videoSelection  ----- */
+
+#videoSelection {
+  position: absolute;
+  top: 560px;
+  left: 200px;
+  width: 720px;
+  margin-bottom: 80px;
+}
+.videoSelection {
+  display: block;
+  margin: 5px;
+  width: 710px;
+  height: 20px;
+  text-decoration: none;
+  text-transform: uppercase;
+  box-shadow: 2px 2px 4px 0px #000;
+  transition: all 1s ease-out 0.2s;
+  font-size: 15px;
+  line-height: 16px;
+  text-transform: uppercase;
+  padding: 5px 5px 0;
+  cursor: pointer;
+}
+.unSelectedVideo {
+  color: aliceblue;
+  font-weight: 500;
+  background-color: black;
+  transition: all 0.1s ease-out;
+}
+.selectedVideo {
+  color: black;
+  background-color: aliceblue;
+  transition: all 0.1s ease-out;
+}
