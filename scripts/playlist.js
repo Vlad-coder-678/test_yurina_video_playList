@@ -277,7 +277,7 @@ function processFrame() {
   }
   display.putImageData(frame, 0, 0);
 
-  setTimeout(processFrame, 29);
+  setTimeout(processFrame, 0);
 }
 
 /*
