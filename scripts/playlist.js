@@ -1,39 +1,39 @@
-const videos = [
+let videos = [
   {
     id: 0,
     name: "Electronics",
     src: "./assets/video/Electronics",
-    time: "0.06",
+    duration: null,
   },
   {
     id: 1,
     name: "News",
     src: "./assets/video/news",
-    time: "0.15",
+    duration: null,
   },
   {
     id: 2,
     name: "Ocean",
     src: "./assets/video/Ocean",
-    time: "0.10",
+    duration: null,
   },
   {
     id: 3,
     name: "Office - 1",
     src: "./assets/video/Office - 1",
-    time: "0.06",
+    duration: null,
   },
   {
     id: 4,
     name: "Office - 2",
     src: "./assets/video/Office - 2",
-    time: "0.06",
+    duration: null,
   },
   {
     id: 5,
     name: "Plexus",
     src: "./assets/video/Plexus",
-    time: "0.06",
+    duration: null,
   },
 ];
 var id = 0;
@@ -62,7 +62,18 @@ window.onload = () => {
     videoLinks[i].onclick = setVideo;
   }
 
-  video.addEventListener("ended", nextVideo, false);
+  video.addEventListener(
+    "loadedmetadata",
+    () => {
+      if (videos[id].duration == null) {
+        setMetadata();
+      }
+    },
+    false
+  );
+  video.addEventListener("ended", setVideo, false);
+  // video.addEventListener("play", processFrame, false);
+  video.addEventListener("error", errorHandler, false);
 
   pushUnpushButtons("normal", ["western", "noir", "scifi"]);
   pushUnpushButtons("video0", []);
@@ -81,26 +92,12 @@ function getFormatExtension() {
   }
 }
 
-// событие при окончании видео
-function nextVideo() {
-  // video.name++;
-  // if (video.name >= videos.length) {
-  //   video.name = 0;
-  // }
-  // video.src = videos[video.name].src + getFormatExtension();
-  // video.load();
-  // video.play();
-  setVideo();
-}
-
 // добавляем обработчики событий нажатия клавиш на панели управления
 function handeControl(event) {
   var id = event.target.getAttribute("id");
-  // console.log("выводит id: " + id);
   var video = document.getElementById("video");
   if (id == "play") {
     pushUnpushButtons("play", ["pause"]);
-    // console.log("play");
     if (video.ended) {
       video.load();
     }
@@ -108,38 +105,31 @@ function handeControl(event) {
   } else if (id == "pause") {
     pushUnpushButtons("pause", ["play"]);
     video.pause();
-    // console.log("pause");
   } else if (id == "loop") {
     if (!isButtonPushed("loop")) {
       pushUnpushButtons("loop", []);
-      // console.log("loop");
       video.loop = true;
     } else {
       pushUnpushButtons("", ["loop"]);
-      // console.log("no loop");
       video.loop = false;
     }
   } else if (id == "mute") {
     if (!isButtonPushed("mute")) {
       pushUnpushButtons("mute", []);
-      // console.log("muted");
       video.muted = true;
     } else {
       pushUnpushButtons("", ["mute"]);
-      // console.log("no muted");
       video.muted = false;
     }
   }
 }
 
+// визуальная обработка нажатия кнопок
 function pushUnpushButtons(idToPush, idArrayToUnpush) {
-  // console.log("вход в функцию присваивания класса selected " + idToPush.typeof);
   if (idToPush != "") {
-    // console.log("если класса актив нет то...");
     var anchor = document.getElementById(idToPush);
     var theClass = anchor.getAttribute("class");
     if (theClass.indexOf("selected") === -1) {
-      // console.log("...присваиваем класс актив");
       theClass = theClass.replace("unSelected", "selected");
       anchor.setAttribute("class", theClass);
     }
@@ -149,7 +139,6 @@ function pushUnpushButtons(idToPush, idArrayToUnpush) {
     anchor = document.getElementById(idArrayToUnpush[i]);
     theClass = anchor.getAttribute("class");
     if (theClass.indexOf("selected") !== -1) {
-      // console.log("убираем класс актив");
       theClass = theClass.replace("selected", "unSelected");
       anchor.setAttribute("class", theClass);
     }
@@ -157,16 +146,12 @@ function pushUnpushButtons(idToPush, idArrayToUnpush) {
 }
 
 function isButtonPushed(id) {
-  // console.log("выясняем присутствует ли класс selected " + id);
   var anchor = document.getElementById(id);
   var theClass = anchor.getAttribute("class");
-  // console.log("theClass: " + theClass);
 
   if (theClass.indexOf("selected") !== -1) {
-    // console.log("selected присутствует");
     return true;
   } else {
-    // console.log("selected отсутствует");
     return false;
   }
 }
@@ -174,18 +159,18 @@ function isButtonPushed(id) {
 // функция обработки выбора видео
 function setVideo(event) {
   var video = document.getElementById("video");
-  if (event) {
-    var idEvent = event.target.getAttribute("id");
+  var idEvent;
+  if (event.type == "click") {
+    idEvent = event.target.getAttribute("id");
     id = idEvent.replace("video", "");
-    video.name = id;
-  } else {
-    video.name++;
-    if (video.name >= videos.length) {
-      video.name = 0;
+  } else if (event.type == "ended") {
+    id = Number(video.name) + 1;
+    if (id >= videos.length) {
+      id = 0;
     }
-    id = video.name;
     idEvent = "video" + id;
   }
+  video.name = id;
   video.src = videos[id].src + getFormatExtension();
   var arrayId = [];
   for (var i = 0; i < videos.length; i++) {
@@ -194,7 +179,7 @@ function setVideo(event) {
     }
   }
   pushUnpushButtons(idEvent, arrayId);
-  video.load();
+  pushUnpushButtons("play", ["pause"]);
   video.play();
 }
 
@@ -206,16 +191,22 @@ function setVideoInDom() {
     aElement.className = "videoSelection unSelectedVideo";
     aElement.setAttribute("id", "video" + i);
     aElement.innerText = videos[i].name;
-    var spanTime = document.createElement("span");
-    spanTime.innerText = videos[i].time;
-    spanTime.style.float = "right";
-    aElement.append(spanTime);
     boxVideo.append(aElement);
   }
 }
 
-function endedHandler() {
-  pushUnpushButtons("", ["play"]);
+// при загрузке метаданных, выводим duration в дом
+function setMetadata() {
+  videos[id].duration = video.duration;
+  var spanTime = document.createElement("span");
+  var m = videos[id].duration % 60;
+  spanTime.innerText =
+    Math.floor(videos[id].duration / 60) +
+    ":" +
+    (m < 10 ? "0" : "") +
+    Math.floor(m);
+  spanTime.style.float = "right";
+  document.getElementById("video" + id).append(spanTime);
 }
 
 // функция обработки выбора эфектов
@@ -224,41 +215,29 @@ function setEffect(event) {
   if (id == "normal") {
     pushUnpushButtons("normal", ["western", "noir", "scifi"]);
     effectFunction = null;
-    processFrame();
   } else if (id == "western") {
     pushUnpushButtons("western", ["normal", "noir", "scifi"]);
     effectFunction = western;
-    processFrame();
   } else if (id == "noir") {
     pushUnpushButtons("noir", ["normal", "western", "scifi"]);
     effectFunction = noir;
-    processFrame();
   } else if (id == "scifi") {
     pushUnpushButtons("scifi", ["normal", "western", "noir"]);
     effectFunction = scifi;
-    processFrame();
   }
 }
 
+// обработчик видео
 function processFrame() {
-  console.log("processFrame");
   var video = document.getElementById("video");
   if (video.paused || video.ended) {
     return;
   }
-
   var bufferCanvas = document.getElementById("buffer");
   var displayCanvas = document.getElementById("display");
   var buffer = bufferCanvas.getContext("2d");
   var display = displayCanvas.getContext("2d");
-  // img.crossOrigin = "Anonymous";
-  // video.setAttribute("crossOrigin", "");
-  // var imgObj = new Image();
-  // imgObj.setAttribute("crossOrigin", "");
-  // imgObj.drawImage(video, 0, 0);
-  console.log("video: " + video + " buffer: " + buffer);
   buffer.drawImage(video, 0, 0, bufferCanvas.width, bufferCanvas.height);
-  // buffer.setAttribute("crossOrigin", "");
   var frame = buffer.getImageData(
     0,
     0,
@@ -322,23 +301,14 @@ function scifi(pos, r, g, b, data) {
   data[offset + 2] = Math.round(255 - b);
 }
 
-// if (video.duration.typeOf == undefined) {
-//   spanTime.innerText = "не удалось извлечь время трека";
-// } else {
-//   // var duration = videoNode.duration.toFixed(1);
-//   var m = video.duration % 60;
-//   spanTime.innerText =
-//     Math.floor(video.duration / 60) + ":" + (m < 10 ? "0" : "") + m;
-// }
+function endedHandler() {
+  pushUnpushButtons("", ["play"]);
+}
 
-// video.addEventListener("ended", endedHandler, false);
-// video.addEventListener("play", processFrame, false);
-// video.addEventListener("error", errorHandler, false);
-
-// function errorHandler() {
-//   var video = document.getElementByld("video");
-//   if (video.error) {
-//     video.poster = " images /technical difficulties . jpg";
-//     alert(video.error.code);
-//   }
-// }
+function errorHandler() {
+  var video = document.getElementByld("video");
+  if (video.error) {
+    video.poster = "./assets/image/technicaldifficulties.jpg";
+    alert(video.error.code);
+  }
+}
